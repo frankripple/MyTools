@@ -1,2 +1,6 @@
 
 *.txt
+*.pyc
+*.xlsx
+*.csv
+*.jpg
