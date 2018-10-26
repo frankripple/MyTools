@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-  
 import tools
 import re
+import shutil
 
 current_path = 'log/'
 #r = tools.findaddfilesbyname(current_path,r'show run.txt')
@@ -13,10 +14,6 @@ def findrun(filename):
     else:
         return False
 
-r = tools.findaddfilesbyCondition(current_path,findrun)
-print(r)
-print(len(r))
-
 def findcommand(filename):
     f = open(filename,'r')
     content = f.read()
@@ -26,4 +23,18 @@ def findcommand(filename):
     else:
         return False
 
+r = tools.findaddfilesbyCondition(current_path,findrun)
+
+for p in r:
+    f = open(p,'r')
+    content = f.read()
+    f.close()
+    t = re.search('hostname (\S+)',content)
+    if t:
+        shutil.copyfile(p,'Running-configuration\\%s.txt'%t.groups()[0])
+
+
+
 #r = tools.findaddfilesbyCondition(current_path,findcommand)
+
+
