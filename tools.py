@@ -17,7 +17,7 @@ def findaddfilesbyCondition(rootdir,Condition):
                 result.append(file_path)
     return result
 
-def findaddfilesbyname(rootdir,pfilename):
+def findaddfilesbyname(rootdir,pfilename=''):
     '''
     rootdir is the root path for the file search.
     pfilename is the parttern for match the filename
@@ -26,7 +26,7 @@ def findaddfilesbyname(rootdir,pfilename):
     result = list()
     for parent, dirnames, filenames in os.walk(rootdir,followlinks=True):
         for filename in filenames:
-            if re.search(pfilename,filename):
+            if pfilename == '' or re.search(pfilename,filename):
                 file_path = os.path.join(parent, filename)
                 result.append(file_path)
     return result
