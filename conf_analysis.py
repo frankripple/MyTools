@@ -135,8 +135,44 @@ def get_interface(file_list):
             interface.save()
 
 
+def get_interface_vlan(file_list):
+    for p in file_list:
+        f = open(p,'r')
+        lines  = f.readlines()
+        f.close()
+        hostname = ''
+        result = list()
+        interface = list()
+        for l in lines:
+            t = re.search('^interface (\S+)',l)
+            if t:
+                result.append(interface)
+                interface = list()
+                interface.append(t.groups()[0])
+            
+            t = re.search('switchport trunk allowed vlan (\S+)',l)
+            if t:
+                interface.append(t.groups()[0])
+            
+            t = re.search('switchport access vlan (\d+)',l)
+            if t:
+                interface.append(t.groups()[0])
+            
+            t = re.search('channel-group (\d+) mode',l)
+            if t:
+                interface.append(t.groups()[0])
+        
+        return result
+
+
 if __name__ == "__main__":
-    f = filedialog.askopenfile()
-    content = f.read()
-    f.close()
-    config_frequency(content)
+    #f = filedialog.askopenfile()
+    #content = f.read()
+    #f.close()
+    #config_frequency(content)
+    r = get_interface_vlan(('D:\\Python\\Tools\\B_HYA02_ZBA_AS02',))
+    print(r)
+    #with open("interface_vlan.csv","a+") as csvfile: 
+    #    f_csv = csv.writer(csvfile)
+    #    f_csv.writerows(r)
+    
