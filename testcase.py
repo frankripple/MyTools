@@ -27,7 +27,7 @@ def findcommand(filename):
 
 
 def copy_configuration(path):
-    r = tools.findaddfilesbyCondition(path,findrun)
+    r = tools.findallfilesbyCondition(path,findrun)
     for p in r:
         f = open(p,'r')
         content = f.read()
@@ -36,13 +36,16 @@ def copy_configuration(path):
         if t:
             shutil.copyfile(p,'Running-configuration\\%s.txt'%t.groups()[0])
 
+
+
+
 current_path = 'log/'
 
 higher_version = ('12.2','15.0','15.2')
 lower_version = ('6.2(20)','5.2(1)N1(8)','7.0(3)I6(1)','7.0(8)N1(1)')
 firewall_version = ('9.6(4)')
-if __name__ == "__main__":
-    #copy_configuration(current_path)
+
+def get_ACLlist():
     r = tools.findaddfilesbyname('Running-configuration\\')
     versions = list()
     ACLs = list()
@@ -100,3 +103,28 @@ if __name__ == "__main__":
     with open('version.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(versions)
+
+target_root = 'result'
+
+def copy_route(path):
+    for parent, dirnames, filenames in os.walk(path,followlinks=True):
+        for folder in dirnames:
+            if folder == 'txt':
+                target_path = os.path.join(target_root,os.path.basename(parent))
+                if not os.path.exists(target_path):
+                    os.mkdir(target_path)
+                r = tools.findaddfilesbyname(os.path.join(parent,folder),'route')
+                for p in r:
+                    f = open(p,'r')
+                    content = f.read()
+                    f.close()
+                    t = re.search('(\S+)#',content)
+                    if t:
+                        if '/' in t.groups()[0]:
+                            shutil.copyfile(p,os.path.join(target_path,'%s.txt'%t.groups()[0].split('/')[0]))
+                        else:
+                            shutil.copyfile(p,os.path.join(target_path,'%s.txt'%t.groups()[0]))
+
+if __name__ == "__main__":
+    copy_route('log')
+    

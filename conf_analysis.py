@@ -16,7 +16,7 @@ def findrun(filename):
     else:
         return False
 
-r = tools.findaddfilesbyCondition('log',findrun)
+r = tools.findallfilesbyCondition('log',findrun)
 
 #Get text and join all from all configuration.
 #t = list()
