@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-  
+'''
+    Some small function which can be used in project
+'''
 import os
 import re
 import datetime
@@ -6,30 +9,47 @@ import datetime
 
 def findallfilesbyCondition(rootdir,Condition):
     '''
-    rootdir is the root path for the file search.
-    Condition is a function for match the file. And Condtion must accept a parameter file_path and return True or False
-    return value is the list of all the fullname of files.
+    This function is used to find files which can match user-defined conditions
+    Args:
+        rootdir is the root path for the file search. Include subfolders
+        Condition is a function for match the file. And Condtion must accept a parameter file_name and return True or False
+    Returns:
+        The list of all the fullname of files. If list is empty, it means the dir is empty
+    Raises:
+        Raise NotADirectoryError is the rootdir not exsit or is a dirname
     '''
+    if not os.path.isdir(rootdir):
+        raise NotADirectoryError
     result = list()
     for parent, dirnames, filenames in os.walk(rootdir,followlinks=True):
         for filename in filenames:
             file_path = os.path.join(parent, filename)
             if Condition(file_path):
-                result.append(file_path)
+                result.append(os.path.abspath(file_path))
     return result
 
 def findallfilesbyname(rootdir,pfilename=''):
     '''
-    rootdir is the root path for the file search.
-    pfilename is the parttern for match the filename
-    return value is the list of all the fullname of files.
+    This function is used to find files whose name can match pfilename
+
+    Args:
+        rootdir is the root path for the file search.
+        [pfilename] is the parttern for match the filename. Include subfolders
+    Returns:
+        The list of all the full path of files which match the pfilename.
+        If no pfilename or pfilename is '', it will return all files in this folder.
+    Raises:
+        Raise NotADirectoryError is the rootdir not exsit or is not a dirname
     '''
     result = list()
+    if not os.path.isdir(rootdir):
+        raise NotADirectoryError
     for parent, dirnames, filenames in os.walk(rootdir,followlinks=True):
         for filename in filenames:
             if pfilename == '' or re.search(pfilename,filename):
                 file_path = os.path.join(parent, filename)
-                result.append(file_path)
+                result.append(os.path.abspath(file_path))
+                
     return result
 
 def get_keywords(pattern_list,content):
@@ -46,8 +66,6 @@ def get_current_time(format="%Y-%m-%d %H:%M:%S"):
         return "Error Time Format"
 
 class log_tools():
-    
-    logs = list()
     error_logs = list()
     info_logs = list()
     def __init__(self):
@@ -63,7 +81,7 @@ class log_tools():
 
     @property
     def count(self):
-        return len(self.logs)
+        return len(self.all_logs)
     
     @property
     def all_logs(self):
