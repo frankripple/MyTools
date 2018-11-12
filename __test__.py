@@ -4,6 +4,7 @@ import os
 
 class TestTools(unittest.TestCase):
     def is_txt_file(self,file_name):
+        ''' A function used for tools.findallfilesbyCondition'''
         if file_name.split('.')[-1] == 'txt':
             return True
         else:
@@ -44,9 +45,7 @@ class TestTools(unittest.TestCase):
         self.assertEqual(r,expected)
     
     def test_get_time(self):
-        '''
-        Test for get time tools
-        '''
+        ''' Test for get time tools '''
         self.assertEqual(tools.get_current_time('%123'),'Error Time Format')
 
 
