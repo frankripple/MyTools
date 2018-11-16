@@ -61,6 +61,7 @@ def get_keywords(pattern_list, content):
         Raise:
             re.error: if the pattern is not corret
     '''
+    #TODO need to try to optimize the re search
     for _p in pattern_list:
         try:
             _t = re.search(_p, content)
