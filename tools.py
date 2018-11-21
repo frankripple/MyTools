@@ -2,6 +2,7 @@
 '''    Some small function which can be used in project  '''
 import os
 import re
+import csv
 import datetime
 
 
@@ -104,12 +105,12 @@ class LogTools():
 
     def add_error(self, detail):
         ''' Format an error string'''
-        self.error_logs.append("%s Error: %s"%(get_current_time(), detail))
+        self.error_logs.append("%s Error: %s\n"%(get_current_time(), detail))
         return self.count
 
     def add_info(self, detail):
         ''' Format an log string'''
-        self.info_logs.append("%s Info: %s"%(get_current_time(), detail))
+        self.info_logs.append("%s Info: %s\n"%(get_current_time(), detail))
         return self.count
 
     @property
@@ -133,3 +134,36 @@ class LogTools():
         return self.info_logs
 
 LOGS = LogTools()
+
+def list_write_to_csv(file_name, content, header=None):
+    '''
+        Output all content to a csv file.
+        Args:
+            file_name:
+                Full name of the CSV file
+            content:
+                List which need to be written.
+            header:
+                if there is header, add it.
+        Returns:
+        Raises:
+            IOError: If can not open or write the file.
+    '''
+    if content:
+        try:
+            with open(file_name, 'w', newline='') as csvfile:
+                if isinstance(content[0], list):
+                    writer = csv.writer(csvfile)
+                    if header:
+                        writer.writerow(header)
+                    writer.writerows(content)
+                elif isinstance(content[0], dict):
+                    if not header:
+                        header = content[0].keys()
+                    writer = csv.DictWriter(csvfile, fieldnames=header)
+                    writer.writeheader()
+                    writer.writerows(content)
+        except IOError as _e:
+            LOGS.add_error(_e)
+            return False
+    return True
