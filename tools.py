@@ -137,33 +137,30 @@ LOGS = LogTools()
 
 def list_write_to_csv(file_name, content, header=None):
     '''
-        Output all content to a csv file.
+        Output all content to a csv file. item of content can be list or dict
+        if content is dict, header should by matched with keys of dict
         Args:
             file_name:
                 Full name of the CSV file
             content:
-                List which need to be written.
+                List which need to be written. item of content can be list or dict
             header:
                 if there is header, add it.
         Returns:
         Raises:
             IOError: If can not open or write the file.
+            KeyError: When content is not list
+            PermissionError: When reopen the file
     '''
-    if content:
-        try:
-            with open(file_name, 'w', newline='') as csvfile:
-                if isinstance(content[0], list):
-                    writer = csv.writer(csvfile)
-                    if header:
-                        writer.writerow(header)
-                    writer.writerows(content)
-                elif isinstance(content[0], dict):
-                    if not header:
-                        header = content[0].keys()
-                    writer = csv.DictWriter(csvfile, fieldnames=header)
-                    writer.writeheader()
-                    writer.writerows(content)
-        except IOError as _e:
-            LOGS.add_error(_e)
-            return False
-    return True
+    with open(file_name, 'w', newline='') as csvfile:
+        if isinstance(content[0], list):
+            writer = csv.writer(csvfile)
+            if header:
+                writer.writerow(header)
+            writer.writerows(content)
+        elif isinstance(content[0], dict):
+            if not header:
+                header = content[0].keys()
+            writer = csv.DictWriter(csvfile, fieldnames=header)
+            writer.writeheader()
+            writer.writerows(content)
