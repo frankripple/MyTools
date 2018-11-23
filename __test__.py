@@ -4,8 +4,6 @@ Test for tools
 import unittest
 import os
 import tools
-from filecmp import dircmp
-
 def is_txt_file(file_name):
     ''' A function used for tools.findallfilesbyCondition'''
     if file_name.split('.')[-1] == 'txt':
@@ -15,16 +13,17 @@ class TestTools(unittest.TestCase):
     ''' Test for tools function    '''
     def test_find_file_by_name(self):
         '''
-            Test for all conditions of findallfilesbyname
+        Test for all conditions of findallfilesbyname
         '''
         current_patch = os.path.abspath('.')
-        test_path = r'ut\file_test'
+        test_path = 'ut'
         expected = [os.path.join(current_patch, test_path, 'ForUT1.txt'),]
         self.assertEqual(tools.findallfilesbyname(test_path, 'UT1'), expected)
 
         expected = [
             os.path.join(current_patch, test_path, 'ForUT1.txt'),
             os.path.join(current_patch, test_path, 'ForUT2.txt'),
+            os.path.join(current_patch, test_path, 'test.csv'),
         ]
         self.assertEqual(tools.findallfilesbyname(test_path), expected)
 
@@ -38,10 +37,10 @@ class TestTools(unittest.TestCase):
 
     def test_find_file_by_condition(self):
         '''
-            Test for all conditions findallfilesbyCondition
+        Test for all conditions findallfilesbyCondition
         '''
         current_patch = os.path.abspath('.')
-        test_path = r'ut\file_test'
+        test_path = 'ut'
         with self.assertRaises(NotADirectoryError):
             tools.findallfilesbycondition('NonExistPath', is_txt_file)
 
@@ -84,29 +83,6 @@ class TestTools(unittest.TestCase):
         tools.list_write_to_csv(test_file, content, header)
         with open(test_file) as _f:
             self.assertEqual(_f.read(), 'h1,h2,h3\ntest1,test2\n')
-
-    def test_get_common_file(self):
-        '''Test for get common files function'''
-        right_dir = r'ut\common_test\old'
-        left_dir = r'ut\common_test\new'
-
-        common_file_list, left_only_list, right_only_list = \
-        tools.get_common_files(left_dir, right_dir)
-
-        self.assertEqual(
-            common_file_list,
-            [r'1.txt', r'device1\1.txt', r'device2\1.txt', r'device2\device1\1.txt']
-        )
-        self.assertEqual(left_only_list, [r'device3', r'only_in_new.txt'])
-        self.assertEqual(right_only_list, [r'device2\only_in_old.txt'])
-
-    def test_get_common_error(self):
-        '''Test abormal sitution of get common files function'''
-        right_dir = r'ut\common_test\old\1.txt' # not a dir but a file
-        left_dir = r'ut\common_test\new'
-
-        self.assertEqual((None, None, None), tools.get_common_files(left_dir, right_dir))
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,7 +4,6 @@ import os
 import re
 import csv
 import datetime
-from filecmp import dircmp
 
 
 def findallfilesbycondition(rootdir, condition):
@@ -165,54 +164,3 @@ def list_write_to_csv(file_name, content, header=None):
             writer = csv.DictWriter(csvfile, fieldnames=header)
             writer.writeheader()
             writer.writerows(content)
-
-
-
-def _get_common_files(dcmp, common, left, right, _base_len=0):
-    '''
-        Loop function only for get common files
-    '''
-    if not _base_len:
-        _base_len = len(dcmp.left) + 1
-    cur_dir = dcmp.left[_base_len:]
-    for name in dcmp.common_files:
-        common.append(os.path.join(cur_dir, name))
-
-    for name in dcmp.left_only:
-        left.append(os.path.join(cur_dir, name))
-
-    for name in dcmp.right_only:
-        right.append(os.path.join(cur_dir, name))
-
-    for sub_dcmp in dcmp.subdirs.values():
-        _get_common_files(sub_dcmp, common, left, right, _base_len)
-
-def get_common_files(left_dir, right_dir):
-    '''
-        Function to get common and diff files in dir. And it will search all sub dirs
-        Args:
-            left_dir, right_dir:
-                Dirs which need to be compare
-        returns:
-            If dir is not correct, will return (None, None, None)
-            common:
-                result of all common file names
-            left:
-                result of all files and dirs which only in left dir
-            right:
-                result of all files and dirs which only in right dir
-    '''
-    dcmp = dircmp(left_dir, right_dir)
-    common_file_list = list()
-    left_only_list = list()
-    right_only_list = list()
-
-    try:
-        _get_common_files(dcmp, common_file_list, left_only_list, right_only_list)
-    except OSError as _e:
-        return (None, None, None)
-
-    return common_file_list, left_only_list, right_only_list
-
-if __name__ == '__main__':
-    pass
