@@ -4,7 +4,7 @@ Test for tools
 import unittest
 import os
 import tools
-from filecmp import dircmp
+
 
 def is_txt_file(file_name):
     ''' A function used for tools.findallfilesbyCondition'''

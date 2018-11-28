@@ -154,17 +154,18 @@ def list_write_to_csv(file_name, content, header=None):
             PermissionError: When reopen the file
     '''
     with open(file_name, 'w', newline='') as csvfile:
-        if isinstance(content[0], list):
-            writer = csv.writer(csvfile)
-            if header:
-                writer.writerow(header)
-            writer.writerows(content)
-        elif isinstance(content[0], dict):
-            if not header:
-                header = content[0].keys()
-            writer = csv.DictWriter(csvfile, fieldnames=header)
-            writer.writeheader()
-            writer.writerows(content)
+        if content:
+            if isinstance(content[0], (list, tuple)):
+                writer = csv.writer(csvfile)
+                if header:
+                    writer.writerow(header)
+                writer.writerows(content)
+            elif isinstance(content[0], dict):
+                if not header:
+                    header = content[0].keys()
+                writer = csv.DictWriter(csvfile, fieldnames=header)
+                writer.writeheader()
+                writer.writerows(content)
 
 
 
